@@ -1,0 +1,282 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "totalLevels": 3,
+    "gameTitle": "World Between Us"
+  },
+  "levels": [
+    {
+      "id": 1,
+      "title": "First Wake",
+      "scene": "glitch_room",
+      "atmosphere": "You wake in a room that almost feels like home. The walls breathe. Something is wrong.",
+      "ambientSound": "static_hum",
+      "background": "gradient_room",
+      "sanityStart": 100,
+      "sanityDrainRate": 2,
+      "glitchThreshold": 60,
+      "objects": [
+        {
+          "id": "mirror",
+          "name": "Cracked Mirror",
+          "x": 15,
+          "y": 20,
+          "width": 140,
+          "height": 220,
+          "interaction": "inspect",
+          "inspectCount": 0,
+          "reality": "A mirror reflecting your tired face.",
+          "dream": "Your reflection moves 3 seconds after you do. It smiles when you don't.",
+          "glitchBehavior": "reflection_delay",
+          "storyRole": "Hints at an alternate self — the 'you' that stayed in the dream.",
+          "loopChange": "On loop 2+, your reflection is already there before you look.",
+          "dialogues": [
+            "Your reflection looks... tired.",
+            "Wait. Did it just move before you did?",
+            "It's smiling. You are not smiling.",
+            "There's someone behind you in the reflection. The room behind you is empty."
+          ],
+          "triggersGlitch": true,
+          "sanityEffect": -8
+        },
+        {
+          "id": "clock",
+          "name": "Wall Clock",
+          "x": 70,
+          "y": 5,
+          "width": 80,
+          "height": 80,
+          "interaction": "inspect",
+          "inspectCount": 0,
+          "reality": "3:17 AM. You've been asleep for hours.",
+          "dream": "The clock runs backwards when you're not watching.",
+          "glitchBehavior": "time_reverse",
+          "storyRole": "Time is fragmented. Each loop resets — but the hands remember.",
+          "loopChange": "Hands freeze on 3:17 permanently after loop 1.",
+          "dialogues": [
+            "3:17 AM.",
+            "Still 3:17 AM. You've been here longer than that.",
+            "The second hand just went backwards.",
+            "It's always been 3:17 AM."
+          ],
+          "triggersGlitch": false,
+          "sanityEffect": -5
+        },
+        {
+          "id": "door",
+          "name": "The Door",
+          "x": 75,
+          "y": 25,
+          "width": 100,
+          "height": 200,
+          "interaction": "click",
+          "inspectCount": 0,
+          "reality": "A wooden door. The exit.",
+          "dream": "The door leads back into the same room.",
+          "glitchBehavior": "loop_return",
+          "storyRole": "The illusion of escape. Every exit is an entrance to the same trap.",
+          "loopChange": "Door gets darker and more corroded each loop.",
+          "dialogues": [
+            "The door is slightly ajar.",
+            "You reach for the handle...",
+            "You step through and find yourself... here again.",
+            "The door doesn't go anywhere. It never did."
+          ],
+          "isExit": true,
+          "triggersGlitch": true,
+          "sanityEffect": -15
+        },
+        {
+          "id": "photograph",
+          "name": "Photograph",
+          "x": 5,
+          "y": 55,
+          "width": 90,
+          "height": 70,
+          "interaction": "inspect",
+          "inspectCount": 0,
+          "reality": "A photo of two people. You recognize one of them.",
+          "dream": "The other person's face is blurred. It changes each time you look.",
+          "glitchBehavior": "face_morph",
+          "storyRole": "The other person is who you left behind — in reality or in the dream, you're not sure.",
+          "loopChange": "By loop 3, the photo only shows one person. You.",
+          "dialogues": [
+            "Two people. You recognize yourself.",
+            "The other face is blurred.",
+            "Now it looks like you. Two of you.",
+            "There's only one person in this photo now. When did that happen?"
+          ],
+          "triggersGlitch": false,
+          "sanityEffect": -10
+        },
+        {
+          "id": "phone",
+          "name": "Dead Phone",
+          "x": 55,
+          "y": 75,
+          "width": 50,
+          "height": 90,
+          "interaction": "click",
+          "inspectCount": 0,
+          "reality": "Your phone. Dead battery. Black screen.",
+          "dream": "The screen shows a message from a contact named YOU.",
+          "glitchBehavior": "phantom_message",
+          "storyRole": "Communication from the other timeline. Your dream-self is trying to warn you.",
+          "loopChange": "Message changes each loop, getting more desperate.",
+          "dialogues": [
+            "Dead. No battery.",
+            "The screen flickered for a second. Did you see that?",
+            "A message: 'DON'T OPEN THE DOOR' — from: YOU",
+            "New message: 'YOU'VE DONE THIS BEFORE. STOP.'"
+          ],
+          "triggersGlitch": true,
+          "sanityEffect": -12
+        },
+        {
+          "id": "window",
+          "name": "Sealed Window",
+          "x": 30,
+          "y": 10,
+          "width": 120,
+          "height": 100,
+          "interaction": "inspect",
+          "inspectCount": 0,
+          "reality": "A window. Outside is dark — it's 3AM.",
+          "dream": "Outside is the same room. Infinite recursion.",
+          "glitchBehavior": "infinite_room",
+          "storyRole": "There is no outside. The world ends at these walls.",
+          "loopChange": "Window shows daytime on loop 2, then nothing — just white — on loop 3.",
+          "dialogues": [
+            "Dark outside. 3AM makes sense.",
+            "Wait. That's not outside. That's another room.",
+            "The other room has someone in it. Looking back at you.",
+            "It's white now. Just white. Nothing exists out there."
+          ],
+          "triggersGlitch": false,
+          "sanityEffect": -7
+        }
+      ],
+      "glitchSequence": {
+        "trigger": "sanity_below_60",
+        "events": [
+          { "type": "screen_shake", "duration": 800 },
+          { "type": "color_invert", "duration": 300 },
+          { "type": "object_shift", "targets": ["mirror", "clock"], "duration": 1200 },
+          { "type": "text_glitch", "message": "T̴H̷I̸S̵ ̷I̸S̵N̴'̸T̷ ̸R̴E̸A̷L̵", "duration": 2000 }
+        ]
+      },
+      "exitCondition": {
+        "type": "object_sequence",
+        "sequence": ["phone", "mirror", "door"],
+        "description": "Read the phone warning, confront the mirror truth, then open the door.",
+        "alternateExit": {
+          "type": "sanity_zero",
+          "ending": "trapped_in_loop"
+        }
+      },
+      "endings": {
+        "good": { "id": "escape_aware", "text": "You knew it was a loop. You broke it consciously." },
+        "bad": { "id": "trapped_in_loop", "text": "You walked through the door again. And again." }
+      },
+      "loop": {
+        "maxLoops": 3,
+        "resetSanityBy": -10,
+        "messageOnLoop": ["", "Something feels familiar...", "You've been here before.", "This is the last time."]
+      }
+    },
+    {
+      "id": 2,
+      "title": "The Corridor That Breathes",
+      "scene": "infinite_hallway",
+      "atmosphere": "A hallway stretches in both directions. The walls pulse. The lights flicker in morse code.",
+      "ambientSound": "heartbeat_echo",
+      "background": "hallway_gradient",
+      "sanityStart": 85,
+      "sanityDrainRate": 3,
+      "glitchThreshold": 50,
+      "objects": [
+        {
+          "id": "door_left",
+          "name": "Left Door",
+          "x": 5,
+          "y": 30,
+          "width": 80,
+          "height": 180,
+          "interaction": "click",
+          "reality": "A door to the left.",
+          "dream": "Leads to childhood memories — fragmented.",
+          "storyRole": "The past path. Going left means confronting what you ran from.",
+          "sanityEffect": -20,
+          "triggersGlitch": true
+        },
+        {
+          "id": "door_right",
+          "name": "Right Door",
+          "x": 85,
+          "y": 30,
+          "width": 80,
+          "height": 180,
+          "interaction": "click",
+          "reality": "A door to the right.",
+          "dream": "Leads to a version of your future — cold, sterile.",
+          "storyRole": "The future path. Going right means accepting what you become.",
+          "sanityEffect": -20,
+          "triggersGlitch": true
+        },
+        {
+          "id": "morse_light",
+          "name": "Flickering Light",
+          "x": 45,
+          "y": 2,
+          "width": 60,
+          "height": 40,
+          "interaction": "inspect",
+          "reality": "A faulty fluorescent light.",
+          "dream": "It's blinking a message in morse code: WAKE UP",
+          "storyRole": "Your subconscious is fighting back against the loop.",
+          "sanityEffect": 5,
+          "triggersGlitch": false
+        }
+      ],
+      "exitCondition": {
+        "type": "choice",
+        "description": "Choose left (past) or right (future). Your choice affects the final ending."
+      }
+    },
+    {
+      "id": 3,
+      "title": "The Core",
+      "scene": "void_center",
+      "atmosphere": "Nothing. Everything. You are at the center of the loop. The dream and reality overlap here.",
+      "ambientSound": "silence_with_pulse",
+      "background": "void_gradient",
+      "sanityStart": 70,
+      "sanityDrainRate": 5,
+      "glitchThreshold": 40,
+      "objects": [
+        {
+          "id": "the_other",
+          "name": "The Other You",
+          "x": 35,
+          "y": 20,
+          "width": 120,
+          "height": 220,
+          "interaction": "confront",
+          "reality": "Your reflection, standing in open space.",
+          "dream": "The dream-version of you. It has been here longer.",
+          "storyRole": "The final confrontation. Accept or reject your dream-self.",
+          "sanityEffect": -30,
+          "triggersGlitch": true,
+          "isFinalBoss": true
+        }
+      ],
+      "exitCondition": {
+        "type": "final_choice",
+        "choices": [
+          { "id": "merge", "text": "Embrace the dream", "ending": "dreamer_ending" },
+          { "id": "reject", "text": "Wake up", "ending": "reality_ending" }
+        ]
+      }
+    }
+  ]
+}
