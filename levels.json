@@ -184,99 +184,60 @@
         "messageOnLoop": ["", "Something feels familiar...", "You've been here before.", "This is the last time."]
       }
     },
-    {
+ {
       "id": 2,
-      "title": "The Corridor That Breathes",
-      "scene": "infinite_hallway",
-      "atmosphere": "A hallway stretches in both directions. The walls pulse. The lights flicker in morse code.",
-      "ambientSound": "heartbeat_echo",
-      "background": "hallway_gradient",
-      "sanityStart": 85,
-      "sanityDrainRate": 3,
-      "glitchThreshold": 50,
+      "title": "The Hallway Illusion",
+      "scene": "maze_step_1",
+      "atmosphere": "The hallway looks clear ahead. But the mirror shows the truth: the path is blocked. A narrow opening exists to the left.",
+      "ambientSound": "static_hum",
+      "background": "hallway_bg",
+      "sanityStart": 100,
+      "sanityDrainRate": 2,
+      "glitchThreshold": 60,
       "objects": [
         {
-          "id": "door_left",
-          "name": "Left Door",
-          "x": 5,
-          "y": 30,
-          "width": 80,
-          "height": 180,
-          "interaction": "click",
-          "reality": "A door to the left.",
-          "dream": "Leads to childhood memories — fragmented.",
-          "storyRole": "The past path. Going left means confronting what you ran from.",
-          "sanityEffect": -20,
-          "triggersGlitch": true
-        },
-        {
-          "id": "door_right",
-          "name": "Right Door",
-          "x": 85,
-          "y": 30,
-          "width": 80,
-          "height": 180,
-          "interaction": "click",
-          "reality": "A door to the right.",
-          "dream": "Leads to a version of your future — cold, sterile.",
-          "storyRole": "The future path. Going right means accepting what you become.",
-          "sanityEffect": -20,
-          "triggersGlitch": true
-        },
-        {
-          "id": "morse_light",
-          "name": "Flickering Light",
-          "x": 45,
-          "y": 2,
-          "width": 60,
-          "height": 40,
+          "id": "forward_path",
+          "name": "Walk Forward (Trust Reality)",
+          "x": 50,
+          "y": 50,
+          "width": 100,
+          "height": 200,
           "interaction": "inspect",
-          "reality": "A faulty fluorescent light.",
-          "dream": "It's blinking a message in morse code: WAKE UP",
-          "storyRole": "Your subconscious is fighting back against the loop.",
-          "sanityEffect": 5,
-          "triggersGlitch": false
-        }
-      ],
-      "exitCondition": {
-        "type": "choice",
-        "description": "Choose left (past) or right (future). Your choice affects the final ending."
-      }
-    },
-    {
-      "id": 3,
-      "title": "The Core",
-      "scene": "void_center",
-      "atmosphere": "Nothing. Everything. You are at the center of the loop. The dream and reality overlap here.",
-      "ambientSound": "silence_with_pulse",
-      "background": "void_gradient",
-      "sanityStart": 70,
-      "sanityDrainRate": 5,
-      "glitchThreshold": 40,
-      "objects": [
-        {
-          "id": "the_other",
-          "name": "The Other You",
-          "x": 35,
-          "y": 20,
-          "width": 120,
-          "height": 220,
-          "interaction": "confront",
-          "reality": "Your reflection, standing in open space.",
-          "dream": "The dream-version of you. It has been here longer.",
-          "storyRole": "The final confrontation. Accept or reject your dream-self.",
-          "sanityEffect": -30,
+          "InspectCount": 0,
+          "reality": "The path looks clear.",
+          "dream": "The mirror shows a solid wall.",
+          "glitchBehavior": "screen_shake",
+          "storyRole": "Punishes the player for trusting their eyes.",
+          "LoopChange": "None",
+          "dialogues": [
+            "You step forward.",
+            "THUD.",
+            "You collide with something invisible. The path was never open."
+          ],
           "triggersGlitch": true,
-          "isFinalBoss": true
+          "sanityEffect": -10
+        },
+        {
+          "id": "left_path",
+          "name": "Walk Left (Trust Mirror)",
+          "x": 10,
+          "y": 50,
+          "width": 100,
+          "height": 200,
+          "interaction": "inspect",
+          "InspectCount": 0,
+          "reality": "It looks like a solid wall.",
+          "dream": "The mirror shows an open path.",
+          "glitchBehavior": "none",
+          "storyRole": "Rewards the player for trusting the mirror.",
+          "LoopChange": "None",
+          "dialogues": [
+            "You close your eyes and step into what looks like a solid wall.",
+            "You pass through safely.",
+            "You step into empty space… guided by reflection, not sight."
+          ],
+          "triggersGlitch": false,
+          "sanityEffect": 0
         }
-      ],
-      "exitCondition": {
-        "type": "final_choice",
-        "choices": [
-          { "id": "merge", "text": "Embrace the dream", "ending": "dreamer_ending" },
-          { "id": "reject", "text": "Wake up", "ending": "reality_ending" }
-        ]
-      }
-    }
-  ]
-}
+      ]
+ }
