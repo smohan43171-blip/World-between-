@@ -217,4 +217,11 @@ export function runGlitchSequence(sequence) {
     setTimeout(() => triggerGlitch(event.type, event), delay);
     delay += (event.duration || 1000) + 200;
   });
+},function triggerScreenShake(duration = 200) {
+    const gameContainer = document.body; // or your game div
+    gameContainer.classList.add('shake');
+    
+    setTimeout(() => {
+        gameContainer.classList.remove('shake');
+    }, duration);
 }
