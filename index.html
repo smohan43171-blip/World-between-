@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>World Between Us — Dream vs Reality Glitch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=VT323&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/glitch.css" />
+  <link rel="stylesheet" href="./css/game.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     BOOT SCREEN
+═══════════════════════════════════════════════════════════ -->
+<div id="boot-screen" class="overlay visible">
+  <div class="boot-content">
+    <div class="boot-logo">
+      <span class="glitch-char" data-text="WORLD">WORLD</span>
+      <span class="boot-between">between us</span>
+      <div class="boot-sub">Dream vs Reality Glitch</div>
+    </div>
+    <div class="boot-bar-wrap">
+      <div class="boot-bar"><div class="boot-bar-fill" id="boot-fill"></div></div>
+      <div class="boot-bar-label" id="boot-label">Initializing memory fragments...</div>
+    </div>
+    <div class="boot-status" id="backend-status">◌ CONNECTING</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN MENU
+═══════════════════════════════════════════════════════════ -->
+<div id="main-menu" class="overlay">
+  <div class="menu-content">
+    <div class="menu-title">
+      <h1>World<br/><em>Between</em><br/>Us</h1>
+      <p class="menu-tagline">Some dreams don't let go.</p>
+    </div>
+    <div class="menu-buttons">
+      <button class="menu-btn primary" id="btn-new-game">New Game</button>
+      <button class="menu-btn" id="btn-continue" style="display:none">Continue</button>
+      <button class="menu-btn ghost" id="btn-how-to-play">How to Play</button>
+      <button class="menu-btn ghost" id="btn-subscription">Subscription</button>
+    </div>
+    <div class="menu-footer">
+      <span id="world-stats-menu"></span>
+      <span class="version-tag">v1.0 — BETA</span>
+    </div>
+  </div>
+  <!-- Ambient particles -->
+  <div class="menu-particles" id="menu-particles"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN GAME CONTAINER
+═══════════════════════════════════════════════════════════ -->
+<div id="game-container" class="sanity-high">
+
+  <!-- HUD Top Bar -->
+  <header class="hud-bar">
+    <div class="hud-left">
+      <span class="hud-level" id="level-title">Level 1: First Wake</span>
+      <span class="hud-loop" id="loop-counter"></span>
+    </div>
+    <div class="hud-center">
+      <div class="sanity-wrap">
+        <span class="sanity-label">SANITY</span>
+        <div class="sanity-track">
+          <div class="sanity-fill high" id="sanity-fill" style="width:100%"></div>
+        </div>
+        <span class="sanity-value" id="sanity-value">100</span>
+      </div>
+    </div>
+    <div class="hud-right">
+      <button class="hud-btn" id="btn-hint" title="Get a hint">?</button>
+      <button class="hud-btn" id="btn-menu-toggle">☰</button>
+    </div>
+  </header>
+
+  <!-- Game Scene -->
+  <main id="game-scene" class="scene scene-glitch_room">
+
+    <!-- Atmosphere text -->
+    <div class="atmosphere-wrap">
+      <p class="atmosphere-text" id="atmosphere-text"></p>
+    </div>
+
+    <!-- Object layer -->
+    <div id="object-layer" class="object-layer"></div>
+
+    <!-- Scanlines persistent overlay -->
+    <div class="scanlines-permanent"></div>
+
+    <!-- Vignette -->
+    <div class="vignette"></div>
+
+  </main>
+
+  <!-- Dialogue Box -->
+  <div id="dialogue-box" class="dialogue-box">
+    <div class="dialogue-speaker" id="dialogue-speaker"></div>
+    <div class="dialogue-text" id="dialogue-text"></div>
+    <div class="dialogue-close" id="dialogue-close">[ click to continue ]</div>
+  </div>
+
+  <!-- HUD Bottom Actions -->
+  <footer class="hud-footer">
+    <div class="action-bar">
+      <div class="action-hint" id="action-hint">← Explore the room. Click objects to interact.</div>
+    </div>
+    <div id="global-stats" class="global-stats-popup"></div>
+  </footer>
+
+  <!-- Loop indicator -->
+  <div class="loop-indicator" id="loop-indicator"></div>
+
+  <!-- Save indicator -->
+  <div class="save-indicator" id="save-indicator">✓ SAVED</div>
+
+</div><!-- #game-container -->
+
+<!-- ══════════════════════════════════════════════════════════
+     HINT BOX
+═══════════════════════════════════════════════════════════ -->
+<div id="hint-box" class="hint-overlay">
+  <div class="hint-inner">
+    <div class="hint-header">
+      <span class="hint-icon">◈</span>
+      <span>HINT</span>
+    </div>
+    <div class="hint-body" id="hint-body">Searching the fragments...</div>
+    <div class="hint-remaining" id="hint-remaining"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAUSE MENU
+═══════════════════════════════════════════════════════════ -->
+<div id="pause-menu" class="overlay">
+  <div class="pause-content">
+    <h2>— Paused —</h2>
+    <button class="menu-btn" id="btn-resume">Resume</button>
+    <button class="menu-btn ghost" id="btn-restart-level">Restart Level</button>
+    <button class="menu-btn ghost" id="btn-main-menu-from-pause">Main Menu</button>
+    <div class="subscription-status" id="sub-status-pause"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     FINAL CHOICE OVERLAY (Level 3)
+═══════════════════════════════════════════════════════════ -->
+<div id="final-choice-overlay" class="overlay">
+  <div class="final-choice-content">
+    <p class="final-choice-question">What do you choose?</p>
+    <div class="choices-container"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     GAME OVER OVERLAY
+═══════════════════════════════════════════════════════════ -->
+<div id="gameover-overlay" class="overlay">
+  <div class="gameover-content">
+    <div class="gameover-title">LOOP COMPLETE</div>
+    <div class="gameover-msg">You are part of the loop now.</div>
+    <button class="menu-btn" id="btn-try-again">Try Again</button>
+    <button class="menu-btn ghost" id="btn-gameover-menu">Main Menu</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     ENDING OVERLAY
+═══════════════════════════════════════════════════════════ -->
+<div id="ending-overlay" class="overlay">
+  <div class="ending-content">
+    <div class="ending-prefix">— Ending Unlocked —</div>
+    <div class="ending-text" id="ending-text"></div>
+    <div class="ending-id" id="ending-id"></div>
+    <button class="menu-btn" id="btn-ending-menu">Return to Menu</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW TO PLAY
+═══════════════════════════════════════════════════════════ -->
+<div id="how-to-play" class="overlay">
+  <div class="htp-content">
+    <h2>How to Play</h2>
+    <div class="htp-body">
+      <p>You are trapped between a <em>dream</em> and <em>reality</em>. The room you're in is real. Or it was.</p>
+      <ul>
+        <li><strong>Click objects</strong> to inspect them. Each interaction reveals a fragment of truth.</li>
+        <li><strong>Your sanity</strong> drains over time. Low sanity causes the world to fracture.</li>
+        <li><strong>Choices matter.</strong> Other players' choices echo around you as ghost data.</li>
+        <li><strong>Loops</strong> happen when you take the wrong exit. The room resets — but you remember.</li>
+        <li><strong>Hints</strong> are limited based on your plan. Use them wisely.</li>
+      </ul>
+      <p class="htp-warning">⚠ This game contains themes of unreality, psychological disorientation, and loop mechanics. Sanity is not guaranteed.</p>
+    </div>
+    <button class="menu-btn" id="btn-htp-close">Understood</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SUBSCRIPTION PANEL
+═══════════════════════════════════════════════════════════ -->
+<div id="subscription-panel" class="overlay">
+  <div class="sub-content">
+    <h2>Choose Your Plan</h2>
+    <p class="sub-note">Backend required for real purchases. Demo mode: plans apply instantly.</p>
+    <div class="sub-plans">
+      <div class="sub-card" data-plan="free">
+        <div class="sub-plan-name">FREE</div>
+        <div class="sub-price">$0</div>
+        <ul class="sub-features">
+          <li>2 lifetime hints</li>
+          <li>Full story access</li>
+          <li>Ghost data (read)</li>
+        </ul>
+        <button class="sub-btn" data-plan="free">Select Free</button>
+      </div>
+      <div class="sub-card featured" data-plan="pro">
+        <div class="sub-badge">POPULAR</div>
+        <div class="sub-plan-name">PRO</div>
+        <div class="sub-price">$4.99<span>/mo</span></div>
+        <ul class="sub-features">
+          <li>10 hints/day</li>
+          <li>All levels</li>
+          <li>Ghost data (write)</li>
+          <li>Leaderboard access</li>
+        </ul>
+        <button class="sub-btn" data-plan="pro">Upgrade to Pro</button>
+      </div>
+      <div class="sub-card ultra" data-plan="ultra">
+        <div class="sub-plan-name">ULTRA</div>
+        <div class="sub-price">$9.99<span>/mo</span></div>
+        <ul class="sub-features">
+          <li>13 hints/day</li>
+          <li>Special ending access</li>
+          <li>All Pro features</li>
+          <li>Priority AI hints</li>
+        </ul>
+        <button class="sub-btn" data-plan="ultra">Go Ultra</button>
+      </div>
+    </div>
+    <button class="menu-btn ghost" id="btn-sub-close">Close</button>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div id="obj-tooltip" class="obj-tooltip"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS — load as modules
+═══════════════════════════════════════════════════════════ -->
+<script type="module">
+import { bootGame, startGame, newGame, requestGameHint, getGameState } from "./js/gameEngine.js";
+import { loadGame, hasSave, saveGame, loadSettings, saveSettings } from "./js/saveSystem.js";
+import { upgradeLocalPlan } from "./js/uiController.js";
+
+// ── Boot ─────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", async () => {
+  await bootGame();
+
+  // Show continue button if save exists
+  if (hasSave()) {
+    document.getElementById("btn-continue").style.display = "";
+  }
+
+  // Animate boot bar
+  animateBootBar();
+});
+
+function animateBootBar() {
+  const fill   = document.getElementById("boot-fill");
+  const label  = document.getElementById("boot-label");
+  const steps  = [
+    [10,  "Scanning memory..."],
+    [30,  "Loading level fragments..."],
+    [55,  "Calibrating sanity meter..."],
+    [75,  "Connecting to the void..."],
+    [90,  "Resolving ghost data..."],
+    [100, "Welcome back."]
+  ];
+  let i = 0;
+  const tick = () => {
+    if (i >= steps.length) return;
+    const [pct, msg] = steps[i++];
+    fill.style.width  = pct + "%";
+    label.textContent = msg;
+    setTimeout(tick, 300 + Math.random() * 200);
+  };
+  tick();
+}
+
+// ── Button bindings ──────────────────────────────────────────
+
+document.getElementById("btn-new-game").onclick = () => {
+  hideAll();
+  newGame();
+};
+
+document.getElementById("btn-continue").onclick = () => {
+  hideAll();
+  const save = loadGame();
+  startGame(save.currentLevel);
+};
+
+document.getElementById("btn-hint").onclick = requestGameHint;
+
+document.getElementById("btn-how-to-play").onclick = () => {
+  document.getElementById("how-to-play").classList.add("visible");
+};
+document.getElementById("btn-htp-close").onclick = () => {
+  document.getElementById("how-to-play").classList.remove("visible");
+};
+
+document.getElementById("btn-subscription").onclick = () => {
+  document.getElementById("subscription-panel").classList.add("visible");
+};
+document.getElementById("btn-sub-close").onclick = () => {
+  document.getElementById("subscription-panel").classList.remove("visible");
+};
+
+document.getElementById("btn-menu-toggle").onclick = () => {
+  document.getElementById("pause-menu").classList.add("visible");
+  document.getElementById("game-container").style.filter = "blur(3px)";
+};
+document.getElementById("btn-resume").onclick = () => {
+  document.getElementById("pause-menu").classList.remove("visible");
+  document.getElementById("game-container").style.filter = "";
+};
+document.getElementById("btn-main-menu-from-pause").onclick = () => {
+  hideAll();
+  document.getElementById("game-container").style.filter = "";
+  document.getElementById("main-menu").classList.add("visible");
+};
+document.getElementById("btn-restart-level").onclick = () => {
+  document.getElementById("pause-menu").classList.remove("visible");
+  document.getElementById("game-container").style.filter = "";
+  const state = getGameState();
+  startGame(state.currentLevel);
+};
+
+document.getElementById("btn-try-again").onclick = () => {
+  document.getElementById("gameover-overlay").classList.remove("visible");
+  const state = getGameState();
+  startGame(state.currentLevel);
+};
+document.getElementById("btn-gameover-menu").onclick = () => {
+  hideAll();
+  document.getElementById("main-menu").classList.add("visible");
+};
+
+document.getElementById("btn-ending-menu").onclick = () => {
+  hideAll();
+  document.getElementById("main-menu").classList.add("visible");
+  if (hasSave()) document.getElementById("btn-continue").style.display = "";
+};
+
+// Dialogue close
+document.getElementById("dialogue-close").onclick = () => {
+  document.getElementById("dialogue-box").classList.remove("visible");
+};
+
+// Subscription buttons (demo mode)
+document.querySelectorAll(".sub-btn").forEach(btn => {
+  btn.onclick = () => {
+    const plan = btn.getAttribute("data-plan");
+    upgradeLocalPlan(plan);
+    document.getElementById("subscription-panel").classList.remove("visible");
+    showToast(`Plan upgraded to ${plan.toUpperCase()}!`);
+  };
+});
+
+function hideAll() {
+  document.querySelectorAll(".overlay").forEach(o => o.classList.remove("visible"));
+}
+
+function showToast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.classList.add("show"); }, 10);
+  setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 400); }, 2500);
+}
+
+// Expose for gameEngine callbacks
+window.__showToast = showToast;
+</script>
+
+</body>
+</html>
