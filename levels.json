@@ -240,4 +240,45 @@
           "sanityEffect": 0
         }
       ]
+ },{
+      "id": 4,
+      "title": "The Time Loop Stacker",
+      "scene": "loop_corridor",
+      "atmosphere": "A repeating corridor where time resets, but objects remain. You feel like you have been here before.",
+      "background": "loop_bg",
+      "sanityStart": 100,
+      "sanityDrainRate": 5,
+      "objects": [
+        {
+          "id": "stack_box",
+          "name": "Movable Box",
+          "x": 20,
+          "y": 60,
+          "width": 80,
+          "height": 80,
+          "interaction": "inspect",
+          "dialogues": [
+            "This box feels permanent.",
+            "It stayed from the previous loop.",
+            "You move it slightly... it feels heavy with memory."
+          ],
+          "sanityEffect": 0
+        },
+        {
+          "id": "exit_door",
+          "name": "Unstable Door",
+          "x": 75,
+          "y": 40,
+          "width": 100,
+          "height": 180,
+          "interaction": "inspect",
+          "dialogues": [
+            "The door flickers in and out of existence.",
+            "It seems to become more real the longer you stare.",
+            "Maybe reality is stacking."
+          ],
+          "sanityEffect": -10,
+          "progressToLevel": "end_demo"
+        }
+      ]
  }
