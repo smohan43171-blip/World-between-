@@ -1,112 +1,84 @@
 // ============================================================
-// routes/auth.js — User Authentication Routes
-// World Between Us | Separate Module
+// middleware/auth.js — JWT Verification Middleware
+// World Between Us
+// ============================================================
+// Exports:
+//   requireAuth   — 401 if no valid token; sets req.user
+//   optionalAuth  — sets req.user if token present, never 401s
 // ============================================================
 
-const express = require("express");
-const crypto  = require("crypto");
-const db      = require("../db/database");
-const router  = express.Router();
+"use strict";
 
-// ── Generate user ID ──────────────────────────────────────────
-function generateId(prefix = "user") {
-  return `${prefix}_${crypto.randomBytes(8).toString("hex")}`;
+const jwt = require("jsonwebtoken");
+const db  = require("../db/database");
+
+const ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "wbu_access_dev_secret_change_me";
+
+/**
+ * Extract Bearer token from Authorization header.
+ * Returns the raw token string or null.
+ */
+function _extractToken(req) {
+  const header = req.headers.authorization || "";
+  if (header.startsWith("Bearer ")) return header.slice(7).trim();
+  return null;
 }
 
-// ── POST /api/auth/guest — Create guest session ───────────────
-router.post("/guest", (req, res) => {
+/**
+ * Core verification logic shared by both middleware variants.
+ * Returns the decoded payload or null on any failure.
+ */
+function _verify(token) {
+  if (!token) return null;
   try {
-    const userId = generateId("guest");
-
-    db.run(
-      `INSERT INTO users (id, guest_mode, plan) VALUES (?, 1, 'free')`,
-      [userId]
-    );
-
-    db.run(
-      `INSERT INTO progress (id, user_id) VALUES (?, ?)`,
-      [generateId("prog"), userId]
-    );
-
-    db.run(
-      `INSERT INTO subscriptions (user_id) VALUES (?)`,
-      [userId]
-    );
-
-    res.json({ userId, guestMode: true, plan: "free" });
-  } catch (e) {
-    console.error("[Auth] Guest login error:", e.message);
-    res.status(500).json({ error: "Could not create guest session" });
+    return jwt.verify(token, ACCESS_SECRET);
+  } catch {
+    return null;
   }
-});
+}
 
-// ── POST /api/auth/register — Register new user ───────────────
-router.post("/register", (req, res) => {
-  const { username, email } = req.body;
+/**
+ * requireAuth
+ * Guards a route: responds 401 if the token is missing, expired,
+ * or its version has been revoked.  Sets req.user on success.
+ */
+function requireAuth(req, res, next) {
+  const decoded = _verify(_extractToken(req));
 
-  if (!username || username.length < 2) {
-    return res.status(400).json({ error: "Username too short" });
+  if (!decoded) {
+    return res.status(401).json({ error: "Authentication required" });
   }
 
-  try {
-    const userId   = generateId("user");
-    const existing = db.get(`SELECT id FROM users WHERE username = ?`, [username]);
-
-    if (existing) {
-      return res.status(409).json({ error: "Username taken" });
-    }
-
-    db.run(
-      `INSERT INTO users (id, username, email, guest_mode, plan) VALUES (?, ?, ?, 0, 'free')`,
-      [userId, username, email || null]
-    );
-
-    db.run(
-      `INSERT INTO progress (id, user_id) VALUES (?, ?)`,
-      [generateId("prog"), userId]
-    );
-
-    db.run(
-      `INSERT INTO subscriptions (user_id) VALUES (?)`,
-      [userId]
-    );
-
-    res.json({ userId, username, plan: "free" });
-  } catch (e) {
-    console.error("[Auth] Register error:", e.message);
-    res.status(500).json({ error: "Registration failed" });
-  }
-});
-
-// ── POST /api/auth/login — Simple username login ──────────────
-router.post("/login", (req, res) => {
-  const { username } = req.body;
-
-  if (!username) return res.status(400).json({ error: "Username required" });
-
-  try {
-    const user = db.get(`SELECT id, username, plan FROM users WHERE username = ?`, [username]);
-
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    // Update last active
-    db.run(`UPDATE users SET last_active = datetime('now') WHERE id = ?`, [user.id]);
-
-    res.json({ userId: user.id, username: user.username, plan: user.plan });
-  } catch (e) {
-    res.status(500).json({ error: "Login failed" });
-  }
-});
-
-// ── GET /api/auth/user/:userId — Get user info ────────────────
-router.get("/user/:userId", (req, res) => {
-  const user = db.get(
-    `SELECT id, username, plan, guest_mode, created_at FROM users WHERE id = ?`,
-    [req.params.userId]
+  // Validate token_version against the DB to support logout/revocation
+  const user = db.getOne(
+    `SELECT id, token_version, plan FROM users WHERE id = ?`,
+    [decoded.sub]
   );
+  if (!user || user.token_version !== decoded.ver) {
+    return res.status(401).json({ error: "Token revoked — please log in again" });
+  }
 
-  if (!user) return res.status(404).json({ error: "User not found" });
-  res.json(user);
-});
+  req.user = decoded;   // { sub, ver, plan, iat, exp }
+  next();
+}
 
-module.exports = router;
+/**
+ * optionalAuth
+ * Never blocks the request.  Sets req.user if the token is valid
+ * so downstream handlers can personalise the response.
+ */
+function optionalAuth(req, res, next) {
+  const decoded = _verify(_extractToken(req));
+  if (decoded) {
+    const user = db.getOne(
+      `SELECT id, token_version FROM users WHERE id = ?`,
+      [decoded.sub]
+    );
+    if (user && user.token_version === decoded.ver) {
+      req.user = decoded;
+    }
+  }
+  next();
+}
+
+module.exports = { requireAuth, optionalAuth };
